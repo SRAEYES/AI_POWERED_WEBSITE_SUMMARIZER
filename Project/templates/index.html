@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Summarizer & Translator</title>
+  </head>
+  <body>
+    {% if session["user"] %}
+    <p>Welcome, {{ session["user"] }}</p>
+    <a href="{{ url_for('logout') }}">Logout</a>
+    {% else %}
+    <a href="{{ url_for('login') }}">Login</a>
+    <a href="{{ url_for('register') }}">Signup</a>
+    {% endif %}
+
+    
+  </body>
+</html>
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Content Translator</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        margin: 0;
+        padding: 0;
+        color: #333;
+        overflow: hidden;
+      }
+
+      .background-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -1;
+      }
+
+      .background-container video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        min-width: 100%;
+        min-height: 100%;
+        object-fit: cover;
+      }
+
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 0;
+      }
+      .hero {
+        text-align: center;
+        color: #ffffff;
+        padding: 50px 20px;
+        position: relative;
+        z-index: 1; 
+      }
+      .hero h1 {
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: #ffffff;
+        text-shadow: 5px 5px 15px rgba(0, 0, 0, 1), 
+                     2px 2px 10px rgba(0, 0, 0, 0.9);
+        letter-spacing: 1px;
+        transition: text-shadow 0.3s ease-in-out, color 0.3s ease-in-out;
+      }
+      
+      .hero h1:hover, 
+      .hero h1:active {
+        color: #ffd700; /* Bright gold effect */
+        text-shadow: 8px 8px 20px rgba(255, 215, 0, 1), 
+                     4px 4px 15px rgba(255, 165, 0, 0.9);
+      }
+
+      .hero p {
+        font-size: 1.2rem;
+        margin-top: 10px;
+        color: #ffffff;
+        text-shadow: 3px 3px 10px rgba(0, 0, 0, 1), 
+                     2px 2px 8px rgba(0, 0, 0, 0.9);
+        transition: text-shadow 0.3s ease-in-out, color 0.3s ease-in-out;
+      }
+      
+      .hero p:hover, 
+      .hero p:active {
+        color: #ffd700; /* Bright gold effect */
+        text-shadow: 6px 6px 15px rgba(255, 215, 0, 1), 
+                     3px 3px 10px rgba(255, 165, 0, 0.9);
+      }
+      .container {
+        max-width: 700px;
+        margin: 0px auto;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        font-size: 1.2rem;
+      }
+      .form-group {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 90%;
+      }
+      .form-group label {
+        font-size: 1.3rem;
+        font-weight: 500;
+        width: 40%; /* Ensure labels are aligned properly */
+        text-align: left;
+      }
+      .form-group input {
+        width: 100%;
+        padding: 10px;
+        font-size: 1.1rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+     .form-group input:focus {
+      border-color: #ffd700; /* Bright gold border effect */
+      background-color: rgba(255, 255, 255, 0.1); /* Slight background color change */
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.8); /* Gold glow effect */
+      outline: none; /* Removes default outline */
+      transition: all 0.3s ease-in-out; /* Smooth transition */
+}
+
+    .form-group select#language:focus {
+    border-color: #ffd700; /* Bright gold border effect */
+    background-color: rgba(255, 255, 255, 0.1); /* Slight background color change */
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.8); /* Gold glow effect */
+    outline: none; /* Removes default outline */
+    transition: all 0.3s ease-in-out; /* Smooth transition */
+}
+
+   .form-group select#option:focus {
+   border-color: #ffd700; /* Bright gold border effect */
+   background-color: rgba(255, 255, 255, 0.1); /* Slight background color change */
+   box-shadow: 0 0 10px rgba(255, 215, 0, 0.8); /* Gold glow effect */
+   outline: none; /* Removes default outline */
+   transition: all 0.3s ease-in-out; /* Smooth transition */
+}
+.form-group input:focus + label {
+  color: #ffd700; /* Bright gold color for the label */
+  font-weight: bold; /* Make the label bold */
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.8); /* Glowing effect around the label */
+  transition: all 0.3s ease-in-out; /* Smooth transition */
+}
+      .form-group select {
+        width: 100%; /* Ensure fields are aligned */
+        padding: 12px;
+        font-size: 1.1rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+      .btn-primary {
+        padding: 12px 20px;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #ffffff;
+        background-color: #0066cc;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        width: auto;
+        max-width: 100%;
+        margin: 0 auto;
+      }
+      
+      .btn-primary:active {
+        transform: translateY(20px); /* Creates a "pressing down" effect */
+        box-shadow: 0 4px 10px  #0066cc; /* Adds shadow when button is clicked */
+      }
+      
+      .btn-primary:hover {
+        background-color: #004080;
+        transform: translateY(-2px);
+      }
+
+      footer {
+        text-align: center;
+        padding: 10px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="background-container">
+      <video autoplay muted loop>
+        <source
+          src="https://raw.githubusercontent.com/ManojMuruganA/video-files/main/video.mp4"
+          type="video/mp4"
+        />
+      </video>
+      <div class="overlay"></div>
+    </div>
+
+    <header class="hero">
+      <h1>Automated Website Content Summarizer & Translator</h1>
+      <p>
+        Effortlessly extract and translate text from any webpage in just a few
+        clicks.
+      </p>
+    </header>
+
+    <div class="container">
+      <main>
+        <form action="/process" method="post">
+          <div class="form-group">
+            <label for="url">Enter URL:</label>
+            <input
+              type="url"
+              id="url"
+              name="url"
+              placeholder="https://example.com"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="language" data-translate="choose-language"
+              >Choose Language:</label
+            >
+            <select id="language" name="language" required>
+              <option value="1">Tamil</option>
+              <option value="2">Hindi</option>
+              <option value="3">Telugu</option>
+              <option value="4">Odia</option>
+              <option value="5">Kannada</option>
+              <option value="6">Malayalam</option>
+              <option value="7">Bengali</option>
+              <option value="8">Gujarati</option>
+              <option value="9">Marathi</option>
+              <option value="10">Punjabi</option>
+              <option value="11">Urdu</option>
+              <option value="12">English</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="option">Choose Option:</label>
+            <select id="option" name="option" required>
+              <option value="1">Translation</option>
+              <option value="2">Summarization & Translation</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-primary">Submit</button>
+        </form>
+      </main>
+    </div>
+
+    <footer>
+      &copy; 2025 Text Extractor & Translator | Designed by  AI Avengers
+    </footer>
+  </body>
+</html>

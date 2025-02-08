@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Translated Content</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
+      .background-video {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: -1;
+      }
+      .content {
+        position: relative;
+        z-index: 1;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 10px;
+        margin: 50px auto;
+        max-width: 80%;
+      }
+      .download-section {
+        text-align: center;
+        margin-top: 20px;
+      }
+      .btn-download {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        display: inline-block;
+      }
+      .btn-download:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <video class="background-video" autoplay loop muted>
+      <source src="https://raw.githubusercontent.com/ManojMuruganA/video-files/main/video.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+
+    <div class="content">
+      <div class="section original">
+        <h1>Original Content</h1>
+        <pre>{{ original }}</pre>
+      </div>
+
+      {% if summarized %}
+      <div class="section summarized">
+        <h1>Summarized Content</h1>
+        <pre>{{ summarized }}</pre>
+      </div>
+      {% endif %}
+
+      <div class="section translated">
+        <h1>Translated Content</h1>
+        <pre>{{ translated }}</pre>
+      </div>
+
+      <div class="download-section">
+        <a href="{{ url_for('download') }}" class="btn-download">Download as Word</a>
+      </div>
+    </div>
+  </body>
+</html>
